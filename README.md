@@ -21,4 +21,4 @@ This project utilizes RFID (Radio-Frequency Identification) technology to read a
 
 ## Acknowledgments
 - Inspiration from various open-source RFID projects
-	- in particular [https://github.com/talaexe/Spotify-RFID-Record-Player/blob/main/spotifyTest.py]()
+	- in particular [https://github.com/talaexe/Spotify-RFID-Record-Player/blob/main/spotifyTest.py](https://github.com/talaexe/Spotify-RFID-Record-Player/blob/main/spotifyTest.py)
