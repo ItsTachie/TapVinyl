@@ -18,6 +18,10 @@ SCOPE = 'user-read-playback-state,user-modify-playback-state,playlist-read-priva
 with open('album_uri.json', 'r') as file:
     album_uri = json.load(file)
 
+with open('playlist_uri.json', 'r') as file:
+    playlist_uri = json.load(file)
+
+
 while True:
     try:
         reader=SimpleMFRC522()
@@ -33,27 +37,42 @@ while True:
             print("Card Value is:",id)
             sp.transfer_playback(device_id=DEVICE_ID, force_play=False)
                 
-            if id in album_uri:
-                sp.start_playback(device_id=DEVICE_ID, context_uri=f'spotify:album:{album_uri[id]}')
+
+            #code for playlists 
+            if str(id) in playlist_uri:
+                sp.start_playback(device_id=DEVICE_ID, context_uri=f"spotify:playlist:{playlist_uri[str(id)]}")
                 sleep(2)
-            elif id == 1:
-                sp.pause_playback(device_id=DEVICE_ID)
+
+            #code for playlists
+            if str(id) in album_uri:
+                sp.start_playback(device_id=DEVICE_ID, context_uri=f'spotify:album:{album_uri[str(id)]}')
                 sleep(2)
-            elif id == 2:
-                sp.start_playback(device_id=DEVICE_ID)
-                sleep(2)
-            elif id == 3:
-                sp.previous_track(device_id=DEVICE_ID)
-                sleep(2)
-            elif id == 4:
+                
+            playback_state = sp.current_playback()
+            if playback_state is not None:
+                if id == 694690578903:
+                    shuffle_state = playback_state['shuffle_state']
+                    if shuffle_state: 
+                        sp.shuffle(False, device_id=DEVICE_ID)
+                    else:
+                        sp.shuffle(True, device_id=DEVICE_ID)
+                        
+                if id== 635651817888 :
+                    is_playing = playback_state['is_playing']
+                    if is_playing:
+                        sp.transfer_playback(device_id=DEVICE_ID, force_play=False)
+                    else:
+                        sp.start_playback(device_id=DEVICE_ID)
+            else:
+                print("No playback detected.") 
+
+
+            if id == 66895890293:
                 sp.next_track(device_id=DEVICE_ID)
-                sleep(2)
-            elif id == 5:
-                sp.shuffle(state=True, device_id=DEVICE_ID)
-                sleep(2)
-            elif id == 6:
-                sp.shuffle(state=False, device_id=DEVICE_ID) 
-                sleep(2)           
+
+            if id == 364670485943:
+                sp.previous_track(device_id=DEVICE_ID)
+
 
     except Exception as e : 
         print(e)
@@ -61,8 +80,6 @@ while True:
     finally:
         print("Claening up....")
         GPIO.cleanup()
-
-
 
 
 
