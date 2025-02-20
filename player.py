@@ -14,6 +14,7 @@ CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 DEVICE_ID = os.getenv("DEVICE_ID")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
 SCOPE = 'user-read-playback-state,user-modify-playback-state,playlist-read-private, playlist-read-collaborative,user-library-read'
+CACHE_PATH = os.getenv("CACHE_PATH")
 
 with open('album_uri.json', 'r') as file:
     album_uri = json.load(file)
@@ -21,14 +22,13 @@ with open('album_uri.json', 'r') as file:
 with open('playlist_uri.json', 'r') as file:
     playlist_uri = json.load(file)
 
-
 while True:
     try:
         reader=SimpleMFRC522()
         sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
-                                                    client_secret=CLIENT_SECRET,
-                                                    redirect_uri=REDIRECT_URI,
-                                                    scope=SCOPE))
+                                                            client_secret=CLIENT_SECRET,
+                                                            redirect_uri=REDIRECT_URI,
+                                                            scope=SCOPE))
             
         # create an infinite while loop that will always be waiting for a new scan
         while True:
@@ -80,6 +80,3 @@ while True:
     finally:
         print("Claening up....")
         GPIO.cleanup()
-
-
-

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#script to read rfid tag id's 
 import RPi.GPIO as GPIO
 from mfrc522 import SimpleMFRC522
 

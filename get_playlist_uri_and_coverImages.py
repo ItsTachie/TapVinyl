@@ -1,3 +1,5 @@
+#script to get playlist uris and cover images
+
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
@@ -14,6 +16,7 @@ REDIRECT_URI = os.getenv("REDIRECT_URI")
 
 SCOPE = 'user-read-playback-state,user-modify-playback-state,playlist-read-private, playlist-read-collaborative,user-library-read'
 
+
 sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     client_id=CLIENT_ID,
     client_secret=CLIENT_SECRET,
@@ -21,7 +24,7 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope=SCOPE
     ))
 
-
+directory = ""
 playlist_uri = dict()
 pattern = r'[<>:"/\\|?*]'
 
@@ -44,18 +47,17 @@ while has_more:
         uri = item["id"]
         image_url = item["images"][0]["url"]
         playlist_uri[name] = uri
-        '''
         response = requests.get(image_url)
         if response.status_code == 200:
              # Clean the album name for use as a filename
             filename = re.sub(pattern, "", name)
             
             # Save the image
+            #replace directory with whatever folder directory you want to save the images to 
             with open(fr"{directory}/{filename}.jpg", 'wb') as f:
                 f.write(response.content)
         else:
             print(f"Failed to download image for playlist: {name}")
-        '''
         
     # Update the offset for the next request
     offset += limit

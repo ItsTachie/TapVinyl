@@ -1,8 +1,6 @@
 .env
 .cache
 
-to_do.log
 album_uri.json
-get_cover_images.py
 playlist_uri.json
-
+album_uri_in_pi.json

@@ -1,17 +1,19 @@
-#script to get all the album uris and save them to a json file in the local directory 
+#script to get the album covers from spotify 
 
+import requests
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from dotenv import load_dotenv
 import os
-import json 
-
+import re
 
 load_dotenv()
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 DEVICE_ID = os.getenv("DEVICE_ID")
 REDIRECT_URI = os.getenv("REDIRECT_URI")
+
+
 
 SCOPE = 'user-read-playback-state,user-modify-playback-state,playlist-read-private, playlist-read-collaborative,user-library-read'
 
@@ -22,7 +24,8 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
     scope=SCOPE
     ))
 
-album_uri = dict()
+images = dict()
+directory = ""
 
 # Pagination variables
 limit = 50  # Number of items to fetch per request
@@ -42,14 +45,32 @@ while has_more:
     for item in saved_albums["items"]:
         album_info = item["album"]
         name = album_info["name"]
-        uri = album_info["id"]
-        album_uri[name] = uri
+        url = album_info["images"][0]["url"]
+        images[name] = url
     
     # Update the offset for the next request
     offset += limit
 
 # Print the number of albums fetched
-print(f"Fetched {len(album_uri)} albums.")
+print(f"Fetched {len(images)} albums.")
 
-with open('album_uri.json', 'w') as f: 
-     f.write(json.dumps(album_uri, indent=4))
+# Example: Save album covers to disk
+import requests
+import re
+
+# Regular expression pattern to clean filenames
+pattern = r'[<>:"/\\|?*]'
+
+for album, cover_image in images.items():
+    response = requests.get(cover_image)
+    if response.status_code == 200:
+        # Clean the album name for use as a filename
+        clean_album_name = re.sub(pattern, "", album)
+        
+        # Save the image
+        #replace directory with the appropriate folder to save the file to 
+        with open(fr"{directory}{clean_album_name}.jpg", 'wb') as f:
+            f.write(response.content)
+    else:
+        print(f"Failed to download image for album: {album}")
+
